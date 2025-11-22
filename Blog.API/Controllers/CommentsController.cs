@@ -1,7 +1,6 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Blog.Core.Interfaces;
 using Blog.Core.Models;
+using Blog.API.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blog.API.Controllers
@@ -42,8 +41,8 @@ namespace Blog.API.Controllers
         [HttpGet("posts/{postId}/comments")]
         public async Task<ActionResult<IEnumerable<Comment>>> GetCommentsForPost(int postId)
         {
-            var post = await _postRepository.GetByIdAsync(postId);
-            if (post == null)
+            var postExists = await _postRepository.ExistsAsync(postId);
+            if (!postExists)
                 return NotFound();
 
             var comments = await _commentRepository.GetByPostIdAsync(postId);
@@ -52,54 +51,63 @@ namespace Blog.API.Controllers
 
         // POST: /api/posts/{postId}/comments
         [HttpPost("posts/{postId}/comments")]
-        public async Task<ActionResult<Comment>> CreateComment(int postId, [FromBody] Comment comment)
+        public async Task<ActionResult<Comment>> CreateComment(int postId, Comment comment)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var post = await _postRepository.GetByIdAsync(postId);
-            if (post == null)
+            var postExists = await _postRepository.ExistsAsync(postId);
+            if (!postExists)
                 return NotFound();
 
             comment.PostId = postId;
 
-            var created = await _commentRepository.CreateAsync(comment);
-            return CreatedAtAction(nameof(GetComment), new { id = created.Id }, created);
+            var createdComment = await _commentRepository.CreateAsync(comment);
+
+            return CreatedAtAction(nameof(GetComment), new { id = createdComment.Id }, createdComment);
         }
 
         // PUT: /api/comments/{id}
         [HttpPut("comments/{id}")]
-        public async Task<ActionResult<Comment>> UpdateComment(int id, [FromBody] Comment comment)
+        public async Task<ActionResult<Comment>> UpdateComment(int id, Comment updated)
         {
-            if (id != comment.Id)
-                return BadRequest("Id in URL and body must match.");
+            if (id != updated.Id)
+                return BadRequest("ID in URL must match ID in body");
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var updated = await _commentRepository.UpdateAsync(comment);
-            if (updated == null)
+            var result = await _commentRepository.UpdateAsync(updated);
+            if (result == null)
                 return NotFound();
 
-            return Ok(updated);
+            return Ok(result);
         }
 
         // PATCH: /api/comments/{id}
         [HttpPatch("comments/{id}")]
-        public async Task<ActionResult<Comment>> PatchComment(int id, [FromBody] Comment partialComment)
+        public async Task<ActionResult<Comment>> PatchComment(int id, [FromBody] CommentPatchDto patch)
         {
-            var patched = await _commentRepository.PatchAsync(id, partialComment);
-            if (patched == null)
-                return NotFound();
+            if (patch == null)
+                return BadRequest();
 
-            return Ok(patched);
+        // Build a "partial" Comment object
+        var partialComment = new Comment
+        {
+            Name = patch.Name ?? string.Empty,
+            Email = patch.Email ?? string.Empty,
+            Content = patch.Content ?? string.Empty
+        };
+
+        var result = await _commentRepository.PatchAsync(id, partialComment);
+
+        if (result == null)
+            return NotFound();
+
+        return Ok(result);
         }
+
 
         // DELETE: /api/comments/{id}
         [HttpDelete("comments/{id}")]
         public async Task<IActionResult> DeleteComment(int id)
         {
             var deleted = await _commentRepository.DeleteAsync(id);
+
             if (!deleted)
                 return NotFound();
 

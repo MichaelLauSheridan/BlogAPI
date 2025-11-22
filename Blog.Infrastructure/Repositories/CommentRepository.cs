@@ -41,6 +41,7 @@ namespace Blog.Infrastructure.Repositories
         public async Task<Comment> CreateAsync(Comment comment)
         {
             comment.CreatedDate = DateTime.UtcNow;
+
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
             return comment;
@@ -49,7 +50,8 @@ namespace Blog.Infrastructure.Repositories
         public async Task<Comment?> UpdateAsync(Comment comment)
         {
             var existing = await _context.Comments.FindAsync(comment.Id);
-            if (existing == null) return null;
+            if (existing == null)
+                return null;
 
             existing.Name = comment.Name;
             existing.Email = comment.Email;
@@ -59,19 +61,20 @@ namespace Blog.Infrastructure.Repositories
             return existing;
         }
 
-        public async Task<Comment?> PatchAsync(int id, Comment partialComment)
+        public async Task<Comment?> PatchAsync(int id, Comment partial)
         {
             var existing = await _context.Comments.FindAsync(id);
-            if (existing == null) return null;
+            if (existing == null)
+                return null;
 
-            if (!string.IsNullOrWhiteSpace(partialComment.Name))
-                existing.Name = partialComment.Name;
+            if (!string.IsNullOrWhiteSpace(partial.Name))
+                existing.Name = partial.Name;
 
-            if (!string.IsNullOrWhiteSpace(partialComment.Email))
-                existing.Email = partialComment.Email;
+            if (!string.IsNullOrWhiteSpace(partial.Email))
+                existing.Email = partial.Email;
 
-            if (!string.IsNullOrWhiteSpace(partialComment.Content))
-                existing.Content = partialComment.Content;
+            if (!string.IsNullOrWhiteSpace(partial.Content))
+                existing.Content = partial.Content;
 
             await _context.SaveChangesAsync();
             return existing;
@@ -80,7 +83,8 @@ namespace Blog.Infrastructure.Repositories
         public async Task<bool> DeleteAsync(int id)
         {
             var existing = await _context.Comments.FindAsync(id);
-            if (existing == null) return false;
+            if (existing == null)
+                return false;
 
             _context.Comments.Remove(existing);
             await _context.SaveChangesAsync();

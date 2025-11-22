@@ -1,13 +1,11 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Blog.Core.Interfaces;
 using Blog.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blog.API.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("api/[controller]")] // -> /api/posts
     public class PostsController : ControllerBase
     {
         private readonly IPostRepository _postRepository;
@@ -26,13 +24,14 @@ namespace Blog.API.Controllers
         }
 
         // GET: /api/posts/{id}
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<Post>> GetPost(int id)
         {
             var post = await _postRepository.GetByIdAsync(id);
             if (post == null)
-                return NotFound();
-
+                {
+                    return NotFound();
+                }
             return Ok(post);
         }
 
@@ -43,50 +42,58 @@ namespace Blog.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            // Author must be "admin" as per assignment
+            // Author is always "admin"
             post.Author = "admin";
 
             var created = await _postRepository.CreateAsync(post);
-
             return CreatedAtAction(nameof(GetPost), new { id = created.Id }, created);
         }
 
         // PUT: /api/posts/{id}
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<ActionResult<Post>> UpdatePost(int id, [FromBody] Post post)
         {
             if (id != post.Id)
-                return BadRequest("Id in URL and body must match.");
+            {
+                return BadRequest("Id mismatch between URL and body.");
+            }
 
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
             var updated = await _postRepository.UpdateAsync(post);
             if (updated == null)
+            {
                 return NotFound();
-
+            }
             return Ok(updated);
         }
 
         // PATCH: /api/posts/{id}
-        [HttpPatch("{id}")]
+        [HttpPatch("{id:int}")]
         public async Task<ActionResult<Post>> PatchPost(int id, [FromBody] Post partialPost)
         {
             var patched = await _postRepository.PatchAsync(id, partialPost);
             if (patched == null)
+            {
                 return NotFound();
+            }
 
             return Ok(patched);
         }
 
         // DELETE: /api/posts/{id}
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeletePost(int id)
         {
             var deleted = await _postRepository.DeleteAsync(id);
             if (!deleted)
+            {
                 return NotFound();
-
+            }
+            
             return NoContent();
         }
     }
