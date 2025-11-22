@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/589f7482-c502-49ca-89ab-55c5c3e30a2d/resourceGroups/appsvc_windows_canadacentral/providers/Microsoft.Web/sites/blog-api-lau",
+    "appService.deploySubpath": "Blog.API\\publish"
+}

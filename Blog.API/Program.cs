@@ -2,11 +2,17 @@ using Blog.Core.Interfaces;
 using Blog.Infrastructure.Data;
 using Blog.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Register controllers
-builder.Services.AddControllers();
+// Register controllers, ignore cycles to avoid Post <-> Comment loops
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
 
 // Register DbContext with SQLite
 builder.Services.AddDbContext<BlogDbContext>(options =>

@@ -1,4 +1,5 @@
 using Blog.Core.Interfaces;
+using Blog.API.DTOs;
 using Blog.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -71,18 +72,28 @@ namespace Blog.API.Controllers
             return Ok(updated);
         }
 
-        // PATCH: /api/posts/{id}
-        [HttpPatch("{id:int}")]
-        public async Task<ActionResult<Post>> PatchPost(int id, [FromBody] Post partialPost)
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<Post>> PatchPost(int id, [FromBody] PostPatchDto patch)
         {
-            var patched = await _postRepository.PatchAsync(id, partialPost);
-            if (patched == null)
-            {
+            // Get existing post
+            var existing = await _postRepository.GetByIdAsync(id);
+            if (existing == null)
                 return NotFound();
-            }
 
-            return Ok(patched);
+            // Only update fields that were sent
+            if (!string.IsNullOrWhiteSpace(patch.Title))
+                existing.Title = patch.Title;
+
+            if (!string.IsNullOrWhiteSpace(patch.Content))
+                existing.Content = patch.Content;
+
+            existing.UpdatedDate = DateTime.UtcNow;
+
+            // Re-use your existing update logic
+            var updated = await _postRepository.UpdateAsync(existing);
+            return Ok(updated);
         }
+
 
         // DELETE: /api/posts/{id}
         [HttpDelete("{id:int}")]
@@ -93,7 +104,7 @@ namespace Blog.API.Controllers
             {
                 return NotFound();
             }
-            
+
             return NoContent();
         }
     }
