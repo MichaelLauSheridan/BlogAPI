@@ -7,7 +7,7 @@ using Blog.Core.Models;
 using Blog.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace BlogAPI.Infrastructure.Repositories
+namespace Blog.Infrastructure.Repositories
 {
     public class PostRepository : IPostRepository
     {
