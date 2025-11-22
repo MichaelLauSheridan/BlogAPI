@@ -14,7 +14,7 @@ builder.Services.AddDbContext<BlogDbContext>(options =>
 
 // Register repositories
 builder.Services.AddScoped<IPostRepository, PostRepository>();
-// builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 
 var app = builder.Build();
 
