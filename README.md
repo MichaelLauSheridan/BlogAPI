@@ -33,3 +33,74 @@ BlogAPI/
 ├── Blog.Core/             # Core models and repository interfaces
 ├── Blog.Infrastructure/   # EF Core database context, migrations, and repositories
 └── BlogAPI.sln            # Solution file
+
+API Endpoints
+Posts
+Method	Endpoint	Description
+GET	/api/posts	Get all blog posts
+GET	/api/posts/{id}	Get a single blog post by ID
+POST	/api/posts	Create a new blog post
+PUT	/api/posts/{id}	Update an existing blog post
+PATCH	/api/posts/{id}	Partially update a blog post
+DELETE	/api/posts/{id}	Delete a blog post
+Comments
+Method	Endpoint	Description
+GET	/api/comments	Get all comments
+GET	/api/comments/{id}	Get a single comment by ID
+GET	/api/posts/{postId}/comments	Get comments for a specific post
+POST	/api/posts/{postId}/comments	Create a comment for a post
+PUT	/api/comments/{id}	Update an existing comment
+PATCH	/api/comments/{id}	Partially update a comment
+DELETE	/api/comments/{id}	Delete a comment
+Example Post Request
+{
+  "title": "My First Blog Post",
+  "content": "This is the content of the blog post."
+}
+Example Comment Request
+{
+  "name": "Michael",
+  "email": "michael@example.com",
+  "content": "This is a sample comment."
+}
+Getting Started
+Prerequisites
+.NET SDK
+SQLite
+Visual Studio, VS Code, or another C# IDE
+Postman or another API testing tool
+Run Locally
+
+Clone the repository:
+
+git clone https://github.com/MichaelLauSheridan/BlogAPI.git
+cd BlogAPI
+
+Restore dependencies:
+
+dotnet restore
+
+Run the API project:
+
+dotnet run --project Blog.API
+
+The API can then be tested using Postman or another API client.
+
+What I Learned
+
+Through this project, I practiced:
+
+Building RESTful APIs with ASP.NET Core
+Structuring a backend project using layered architecture
+Using Entity Framework Core with SQLite
+Creating repository interfaces and implementations
+Working with DTOs for partial updates
+Testing API endpoints with Postman
+Organizing backend code for maintainability
+Future Improvements
+Add authentication and authorization
+Add input validation improvements
+Add automated unit and integration tests
+Add Swagger/OpenAPI documentation
+Add pagination for posts and comments
+Add deployment instructions
