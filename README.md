@@ -81,6 +81,16 @@ BlogAPI/
 }
 ```
 
+## Screenshots
+
+### Get Blog Posts
+
+![GET posts response](docs/images/get-posts-response.png)
+
+### Create Blog Post
+
+![Create post response](docs/images/create-post-response.png)
+
 ## Getting Started
 
 ### Prerequisites
