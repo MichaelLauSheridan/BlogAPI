@@ -33,6 +33,7 @@ BlogAPI/
 ├── Blog.Core/             # Core models and repository interfaces
 ├── Blog.Infrastructure/   # EF Core database context, migrations, and repositories
 └── BlogAPI.sln            # Solution file
+```md
 
 API Endpoints
 Posts
