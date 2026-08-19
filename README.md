@@ -110,6 +110,7 @@ Run the API project:
 ```bash
 dotnet run --project Blog.API
 ```
+By default, the development environment uses a local SQLite database file named `blog.sqlite`.
 
 The API can then be tested using Postman or another API client.
 
